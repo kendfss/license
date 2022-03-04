@@ -1,17 +1,21 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"text/template"
 )
 
-var licenses = map[string]struct {
+type License struct {
 	longName string
 	template string
-}{
+}
+
+var licenses = map[string]License{
 	"agpl-3.0":     {"GNU Affero General Public License v3.0", Agpl30Template},
 	"apache-2.0":   {"Apache License 2.0", Apache20Template},
 	"bsd-2-clause": {"BSD 2-Clause \"Simplified\" License", Bsd2ClauseTemplate},
@@ -29,7 +33,7 @@ var licenses = map[string]struct {
 	"wtfpl":        {"Do What The Fuck You Want To Public License", WtfplTemplate},
 }
 
-func printList() {
+func getKeys(table map[string]License) []string {
 	keys := make([]string, 0, len(licenses))
 
 	for key := range licenses {
@@ -37,6 +41,12 @@ func printList() {
 	}
 
 	sort.Strings(keys)
+
+	return keys
+}
+
+func printList() {
+	keys := getKeys(licenses)
 
 	for _, key := range keys {
 		stdout.Printf("%-14s(%s)", key, licenses[key].longName)
@@ -46,22 +56,23 @@ func printList() {
 func printLicense(license, output, name, year string) {
 	file, ok := licenses[license]
 	if !ok {
-		stderr.Printf("unknown license %q\nrun \"license -list\" for list of available licenses", license)
-		os.Exit(2)
+		if match := findLicense(license); match == "" {
+			userInputError.Abort(fmt.Errorf("unknown license %w\nrun \"license -list\" for list of available licenses", license))
+		} else {
+			file, _ = licenses[match]
+		}
 	}
 
 	t, err := template.New("license").Parse(file.template)
 	if err != nil {
-		stderr.Printf("internal: failed to parse license template for %s", license)
-		os.Exit(1)
+		internalError.Abort(fmt.Errorf("internal: failed to parse license template for %w", license))
 	}
 
 	var outFile io.Writer = os.Stdout
 	if output != "" {
 		f, err := os.Create(filepath.Clean(output))
 		if err != nil {
-			stderr.Printf("failed to create file %s: %s", output, err)
-			os.Exit(1)
+			internalError.Abort(fmt.Errorf("failed to create file %s: %w", output, err))
 		}
 		outFile = f
 	}
@@ -70,8 +81,20 @@ func printLicense(license, output, name, year string) {
 		Name string
 		Year string
 	}{name, year}); err != nil {
-		os.Exit(1)
+		internalError.Abort(err)
 	}
 
-	os.Exit(0)
+	noError.Abort(nil)
+}
+
+// find the most recent license that is a regex match for the argument
+func findLicense(pattern string) string {
+	keys := getKeys(licenses)
+	sort.Slice(keys, func(i, j int) bool { return keys[i] > keys[j] })
+	for _, key := range keys {
+		if match, err := regexp.MatchString(pattern, key); err == nil && match {
+			return key
+		}
+	}
+	return ""
 }

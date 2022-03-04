@@ -1,4 +1,7 @@
-`license` is a command line tool to create LICENSE files.
+license
+---
+
+a command line tool to create LICENSE files.
 
 It provides good defaults for name and year on license (customizable if needed), and
 it supports all license types listed on the [GitHub Licenses API](https://developer.github.com/v3/licenses/) and a few more. The license templates used by this program were copied from the GitHub Licenses API, when available.
@@ -28,6 +31,15 @@ With Go 1.16 or higher:
 
 ```
 go install github.com/nishanths/license/v5@latest
+```
+
+##### Manual
+In order to install the man pages you need [Pandoc]() (available in (brew) for mack, and reliable linux package managers).
+For full install run:
+```bash
+git clone github.com/nishanths/license
+cd license
+make
 ```
 
 ### Via the Arch User Repository (AUR)
