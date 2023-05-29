@@ -31,6 +31,7 @@ var licenses = map[string]License{
 	"mpl-2.0":      {"Mozilla Public License 2.0", Mpl20Template},
 	"unlicense":    {"The Unlicense", UnlicenseTemplate},
 	"wtfpl":        {"Do What The Fuck You Want To Public License", WtfplTemplate},
+	"resource":     {"Resource License", RlTemplate},
 }
 
 func getKeys(table map[string]License) []string {

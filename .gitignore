@@ -1,6 +1,4 @@
-### Operating Systems ###
-# Darwin
-.DS_Store
+*.1
 
 #### go ####
 # Binaries for programs and plugins

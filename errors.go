@@ -1,6 +1,6 @@
 /*
-   A template for adding descriptive error reports to a command line interface
-																	 - kendfss
+	   A template for adding descriptive error reports to a command line interface
+																		 - kendfss
 */
 package main
 
@@ -14,13 +14,12 @@ const (
 	noError ErrorCode = iota
 	internalError
 	userInputError
-	warning
 )
 
 type ErrorCode int
 
 func (this ErrorCode) Error() string {
-	return []string{"NO ERROR", "INTERNAL ERROR", "USER INPUT ERROR", "WARNING"}[this]
+	return []string{"NO ERROR", "INTERNAL ERROR", "USER INPUT ERROR"}[this]
 }
 
 func (this ErrorCode) Abort(message error) {

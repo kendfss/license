@@ -13,6 +13,7 @@ all: install update_manpages
 endif
 ifeq ($(shell uname),Darwin)
 	mandir := /usr/local/share/man/man1
+	mandb := mandb
 all: install 
 endif
 ifeq ($(OS),Windows_NT)
