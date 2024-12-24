@@ -35,9 +35,9 @@ var licenses = map[string]License{
 }
 
 func getKeys(table map[string]License) []string {
-	keys := make([]string, 0, len(licenses))
+	keys := make([]string, 0, len(table))
 
-	for key := range licenses {
+	for key := range table {
 		keys = append(keys, key)
 	}
 
@@ -58,15 +58,15 @@ func printLicense(license, output, name, year string) {
 	file, ok := licenses[license]
 	if !ok {
 		if match := findLicense(license); match == "" {
-			userInputError.Abort(fmt.Errorf("unknown license %w\nrun \"license -list\" for list of available licenses", license))
+			userInputError.Abort(fmt.Errorf("unknown license %s\nrun \"license -list\" for list of available licenses", license))
 		} else {
-			file, _ = licenses[match]
+			file = licenses[match]
 		}
 	}
 
 	t, err := template.New("license").Parse(file.template)
 	if err != nil {
-		internalError.Abort(fmt.Errorf("internal: failed to parse license template for %w", license))
+		internalError.Abort(fmt.Errorf("internal: failed to parse license template for %s: %w", license, err))
 	}
 
 	var outFile io.Writer = os.Stdout

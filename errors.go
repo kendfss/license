@@ -40,13 +40,13 @@ func (this ErrorCode) Abortf(message string, args ...interface{}) {
 
 func (this ErrorCode) Warn(message error) {
 	if this >= internalError {
-		fmt.Fprint(os.Stderr, fmt.Errorf("[%s]: %s\n", this.Error(), message))
+		stderr.Println(fmt.Errorf("[%s]: %s\n", this.Error(), message))
 	}
 }
 
 func (this ErrorCode) Warnf(message string, args ...interface{}) {
 	message = fmt.Sprintf(message, args...)
 	if this >= internalError {
-		fmt.Fprint(os.Stderr, fmt.Errorf("[%s]: %s\n", this.Error(), message))
+		stderr.Println(fmt.Errorf("[%s]: %s\n", this.Error(), message))
 	}
 }
